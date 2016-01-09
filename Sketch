@@ -37,7 +37,7 @@ volatile boolean state = LOW; // actual signal from the IR-receiver
 volatile boolean oldState = LOW; // previous signal from the IR-receiver
 
 
-// Timer 1 Interrupt routine, is being called upon four times per millisecond: 
+// Timer 1 Interrupt routine, is being called upon four times a millisecond: 
 SIGNAL(TIMER1_COMPA_vect) 
 {
   oldState = state;
