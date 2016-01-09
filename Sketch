@@ -1,4 +1,5 @@
 
+
 /*
   Design for an IR distance sensor, making use of 38 kHz IR remote receiver TSOP2138 and the Arduino Uno .
   
@@ -9,20 +10,20 @@
   This sketch also makes use of the timer 2 settings:
   Timer 2 OC2A register is used in toggle mode, as a consequence Pin 3 and Pin 11 are not available for the PWM output analogWrite() function!
   
-  This distance measuring system makes use of the signal detection sensitivity of the TSOP2138 depending on the 38 kHz bandfilter characteristics.
-  A kind of slope detection on the 38 kHz band filter transmission curve is used by changing the output pulse frequency of the IR LED.
+  This distance measuring system makes use of the signal detection sensitivity of the TSOP2138 depending on the 38 kHz band-pass filter characteristics.
+  A kind of slope detection on the 38 kHz band-pass filter transmission curve is used by changing the output pulse frequency of the IR LED.
   The output frequncy is tuned toward the center frequency of the TSOP2138 until a signal is received. After a brief pause the frequency is then tuned higher,
   away from the center frequency until detection is lost. after another brief pause the frequency is again lowered towards the center frequency until the signal is detected,
   and so on. As a result of this arrangement the frequency jumps continuously around the border of detection.
-  The adjustment values of the signal period of the output frequency are sampled and filtered in a first order low pass IIR filter to abtain the average value.
+  The adjustment values of the signal period of the output frequency are sampled and filtered in a first order low pass IIR filter to obtain the average value.
   This average value has a linear relation to the distance of the reflected IR light beam from the IR LED. 
   Note! Not all types of 38 kHz IR remote receiver can be used succesfully in this way! The dutycycle of the IR receiver must be at least 50%.
   
-  The frequency range settings in this sketch must be tuned to the specific characteristics of the 38 kHz band filter of the used IR receiver.
+  The frequency range settings in this sketch must be tuned to the specific characteristics of the 38 kHz band-pass filter of the used IR receiver.
   The detection range may be changed by adjusting the current through the IR LED, make use of a switching transistor to boost the current if needed.
 
   Marcel van Soest 
-  07-01-2016
+  09-01-2016
 */
 
 const byte IRLEDpin = 11;     // Pin to connect to the IR LED, output (Timer 2 "A" output: OC2A) 
@@ -41,7 +42,7 @@ SIGNAL(TIMER1_COMPA_vect)
 {
   oldState = state;
   state = digitalRead(inPin); 
-  if (!(state ^ oldState)){   // As long as ther is no change in detection, adjust the IR LED output frequency, else mark time.
+  if (!(state ^ oldState)){   // As long as there is no change in detection, adjust the IR LED output frequency, else mark time.
     if (state){ 
       detValue ++;            // The signal from the IR receiver is used with negative feedback to adjust the ouput frequency of thr IR signal.
       if (detValue > Max){    // This value is to be adjusted for maximum sensitivity of the 38 kHz IR receiver.
@@ -60,9 +61,11 @@ SIGNAL(TIMER1_COMPA_vect)
   result = sum >> 8;          // (sum / devider), calculation of IIR filter output signal, a bitshift (* 2^-8) realises a division (making use of a bitshift for a fast calculation).                            
 }
 
-// function distance(): calculates the disatance from the result of the timer 1 interrupt routine
-float distance(void){        
-  float Length = result / 1024.0;  // calculating a length, with correction for the earlier applied bit shift (timer 1 interrupt routine)
+// function distance(): calculates the distance from the result of the timer 1 interrupt routine
+float distance(void){ 
+  noInterrupts();  
+  float Length = result / 1024.0;  // calculating a length, with correction for the earlier applied bitshift (timer 1 interrupt routine)
+  interrupts();
   return(Length);           
 }
 
@@ -71,12 +74,12 @@ void setup() {
   pinMode(inPin, INPUT);
   Serial.begin(9600);
   // set up timer 1                              
-  OCR1A = 0xAF;               // Timer1  - chose an arbitrary value < 255 and call the "Compare A" function 
+  OCR1A = 0xAF;               // Timer1  - choose an arbitrary value and call the "Compare A" function 
   TIMSK1 |= _BV(OCIE1A);
   TCCR1B = TCCR1B & 0b11111000 | 0x02;  // timer 1 clock divisor 8 voor 3906,3 Hz. Every 256 us the interrupt routine is called upon.
   // set up Timer 2
   TCCR2A = _BV (COM2A0) | _BV(WGM21);  // CTC, toggle OC2A on Compare Match, the IR-LED blinks
-  TCCR2B = _BV (CS20);        // no prescaler, full clock frequency: 16 MHz
+  TCCR2B = _BV (CS20);        // no prescaler, full clock frequency: 16 MHz. 
   OCR2A =  210;               // compare A register value (210 * clock speed) 210 / (16*10^6) = 13.125 nS,
                               // therefore the frequency is 1 / (2 * 13.125) = 38095 Hz. This value will be continuously updated in the interrupt routine.  
 } 
