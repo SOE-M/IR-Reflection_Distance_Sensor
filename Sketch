@@ -3,9 +3,9 @@
 /*
   Design for an IR distance sensor, making use of 38 kHz IR remote receiver TSOP2138 and the Arduino Uno .
   
-  For this project a 38 kHz IR receiver TSOP2138 and a IR-LED in reflection arrangement were used. 
+  For this project a 38 kHz IR receiver TSOP2138 and an IR-LED in reflection arrangement were used. 
   Make sure to screen lateral emission from the IR-LED towards the receiver.
-  This scetch makes use of the timer 1 settings: 
+  This sketch makes use of the timer 1 settings: 
   The clock of timer 1 is set to 3906,3 Hz, This setting affects the PWM frequency for Pin 9 and Pin 10.
   This sketch also makes use of the timer 2 settings:
   Timer 2 OC2A register is used in toggle mode, as a consequence Pin 3 and Pin 11 are not available for the PWM output analogWrite() function!
@@ -73,7 +73,7 @@ void setup() {
   pinMode (IRLEDpin, OUTPUT); 
   pinMode(inPin, INPUT);
   Serial.begin(9600);
-  // set up timer 1                              
+  // set up Timer 1                              
   OCR1A = 0xAF;               // Timer1  - choose an arbitrary value and call the "Compare A" function 
   TIMSK1 |= _BV(OCIE1A);
   TCCR1B = TCCR1B & 0b11111000 | 0x02;  // timer 1 clock divisor 8 voor 3906,3 Hz. Every 256 us the interrupt routine is called upon.
