@@ -64,7 +64,7 @@ SIGNAL(TIMER1_COMPA_vect)
 // function distance(): calculates the distance from the result of the timer 1 interrupt routine
 float distance(void){ 
   noInterrupts();  
-  float Length = result / 1024.0;  // calculating a length, with correction for the earlier applied bitshift (timer 1 interrupt routine)
+  float Length = float(result) / 1024.0;  // calculating a length, with correction for the earlier applied bitshift (timer 1 interrupt routine)
   interrupts();
   return(Length);           
 }
