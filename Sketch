@@ -22,7 +22,7 @@
   The frequency range settings in this sketch must be tuned to the specific characteristics of the 38 kHz band-pass filter of the used IR receiver.
   The detection range may be changed by adjusting the current through the IR LED, make use of a switching transistor to boost the current if needed.
 
-  Marcel van Soest 
+  Marcel
   09-01-2016
 */
 
