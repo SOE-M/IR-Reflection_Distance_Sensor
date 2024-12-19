@@ -1,9 +1,11 @@
 
 
 /*
-  Design for an IR distance sensor, making use of 38 kHz IR remote receiver TSOP2138 and the Arduino Uno .
+  Design for an IR distance sensor, making use of 38 kHz IR remote receiver TSOP2138 and the Arduino Uno.
+  This setup is inspired by the Boebot (Parallax) IR distance sensor arrangement.
   
-  For this project a 38 kHz IR receiver TSOP2138 and an IR-LED in reflection arrangement were used. 
+  For this project a 38 kHz IR receiver TSOP2138 and an IR-LED in reflection arrangement were used.
+  
   Make sure to screen lateral emission from the IR-LED towards the receiver.
   This sketch makes use of the timer 1 settings: 
   The clock of timer 1 is set to 3906,3 Hz, This setting affects the PWM frequency for Pin 9 and Pin 10.
